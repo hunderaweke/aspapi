@@ -1,25 +1,21 @@
 package coreapi
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
 	"net/url"
 	"os"
-	"strconv"
 	"strings"
 	"time"
 
 	"github.com/joho/godotenv"
-	"github.com/redis/go-redis/v9"
 )
 
 type CoreApi struct {
-	redisClient *redis.Client
-	apiKey      string
-	httpClient  *http.Client
+	apiKey     string
+	httpClient *http.Client
 }
 
 type CoreApiResponse struct {
@@ -33,22 +29,9 @@ func NewCoreApi() (*CoreApi, error) {
 	if err := godotenv.Load(); err != nil {
 		return nil, fmt.Errorf("error loading .env file: %v", err)
 	}
-	redisDB, err := strconv.Atoi(os.Getenv("REDIS_DB"))
-	if err != nil {
-		return nil, fmt.Errorf("error converting REDIS_DB to int: %v", err)
-	}
-	redisClient := redis.NewClient(&redis.Options{
-		Addr:     fmt.Sprintf("%s:%s", os.Getenv("REDIS_HOST"), os.Getenv("REDIS_PORT")),
-		Password: os.Getenv("REDIS_PASSWORD"),
-		DB:       redisDB,
-	})
-	if err := redisClient.Ping(context.TODO()).Err(); err != nil {
-		return nil, fmt.Errorf("error connecting to Redis: %v", err)
-	}
 	return &CoreApi{
-		redisClient: redisClient,
-		apiKey:      os.Getenv("CORE_API_KEY"),
-		httpClient:  &http.Client{Timeout: 10 * time.Second},
+		apiKey:     os.Getenv("CORE_API_KEY"),
+		httpClient: &http.Client{Timeout: 10 * time.Second},
 	}, nil
 }
 func (a *CoreApi) GetPapers(p *Params) ([]Paper, error) {
@@ -117,17 +100,7 @@ func (a *CoreApi) GetPapers(p *Params) ([]Paper, error) {
 	req.Header.Set("Authorization", "Bearer "+a.apiKey)
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("User-Agent", "Academic Papers Search")
-	cacheKey := fmt.Sprintf("coreapi:%s", strings.Join(queryParts, "+"))
-	cacheKey += fmt.Sprintf("&limit=%d", p.Limit)
-	cached, err := a.redisClient.Get(context.TODO(), cacheKey).Result()
-	if err == nil {
-		var papers []Paper
-		err = json.Unmarshal([]byte(cached), &papers)
-		if err == nil {
-			return papers, nil
-		}
-		return nil, fmt.Errorf("error unmarshalling cached response: %v", err)
-	}
+
 	resp, err := a.httpClient.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("error making request: %v", err)
@@ -144,13 +117,6 @@ func (a *CoreApi) GetPapers(p *Params) ([]Paper, error) {
 	err = json.Unmarshal(data, &response)
 	if err != nil {
 		return nil, fmt.Errorf("error unmarshalling response: %v", err)
-	}
-	serialized, err := json.Marshal(response.Papers)
-	if err != nil {
-		return nil, fmt.Errorf("error marshalling response: %v", err)
-	}
-	if err = a.redisClient.Set(context.TODO(), cacheKey, serialized, 24*time.Hour).Err(); err != nil {
-		return nil, fmt.Errorf("error setting cache: %v", err)
 	}
 	return response.Papers, nil
 }
