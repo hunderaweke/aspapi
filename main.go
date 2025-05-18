@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type api struct {
@@ -17,9 +18,9 @@ type api struct {
 }
 
 func main() {
-	// ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	// defer cancel()
-	cohereApi, err := cohereapi.NewCohereApi(context.TODO())
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	cohereApi, err := cohereapi.NewCohereApi(ctx)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -31,8 +32,8 @@ func main() {
 		cohereApi: cohereApi,
 		coreApi:   coreApi,
 	}
-	http.HandleFunc("/api/chat", api.handleChat)
-	http.HandleFunc("/api/papers", api.handlePapers)
+	http.HandleFunc("POST /api/chat", api.handleChat)
+	http.HandleFunc("GET /api/papers", api.handlePapers)
 	log.Println("Server started on :8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
