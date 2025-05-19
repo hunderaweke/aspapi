@@ -1,39 +1,45 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { Search, MapPin } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Search, MapPin } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 interface SearchFormProps {
-  initialQuery?: string
-  initialField?: string
+  initialQuery?: string;
+  initialField?: string;
 }
 
-export function SearchForm({ initialQuery = "", initialField = "" }: SearchFormProps) {
-  const router = useRouter()
-  const [query, setQuery] = useState(initialQuery)
-  const [field, setField] = useState(initialField)
-  const [isLoading, setIsLoading] = useState(false)
+export function SearchForm({
+  initialQuery = "",
+  initialField = "",
+}: SearchFormProps) {
+  const router = useRouter();
+  const [query, setQuery] = useState(initialQuery);
+  const [field, setField] = useState(initialField);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!query.trim()) return
+    e.preventDefault();
+    if (!query.trim()) return;
 
-    setIsLoading(true)
+    setIsLoading(true);
     const params = new URLSearchParams({
       q: query,
       field: field,
-    })
+    });
 
-    router.push(`/search?${params.toString()}`)
-  }
+    router.push(`/search?${params.toString()}`);
+  };
 
   return (
-    <form onSubmit={handleSubmit} className="w-full max-w-4xl mx-auto flex flex-col md:flex-row gap-4">
+    <form
+      onSubmit={handleSubmit}
+      className="w-full max-w-4xl mx-auto flex flex-col md:flex-row gap-4"
+    >
       <div className="relative flex-grow">
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
         <Input
@@ -56,9 +62,14 @@ export function SearchForm({ initialQuery = "", initialField = "" }: SearchFormP
           aria-label="Field of study"
         />
       </div> */}
-      <Button type="submit" disabled={isLoading} className="h-12 px-6 bg-accent_red hover:bg-red-700">
+      <Button
+        type="submit"
+        onClick={handleSubmit}
+        disabled={isLoading}
+        className="h-12 px-6 bg-accent_red hover:bg-red-700"
+      >
         Search
       </Button>
     </form>
-  )
+  );
 }
