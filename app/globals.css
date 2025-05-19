@@ -1,0 +1,101 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 39 38% 93%;
+    --foreground: 222 47% 11%;
+
+    --card: 39 38% 93%;
+    --card-foreground: 222 47% 11%;
+
+    --popover: 39 38% 93%;
+    --popover-foreground: 222 47% 11%;
+
+    --primary: 0 68% 57%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 39 38% 88%;
+    --secondary-foreground: 222 47% 11%;
+
+    --muted: 39 38% 88%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 39 38% 88%;
+    --accent-foreground: 222 47% 11%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 39 38% 83%;
+    --input: 39 38% 83%;
+    --ring: 0 68% 57%;
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 222 47% 11%;
+    --foreground: 39 38% 93%;
+
+    --card: 222 47% 11%;
+    --card-foreground: 39 38% 93%;
+
+    --popover: 222 47% 11%;
+    --popover-foreground: 39 38% 93%;
+
+    --primary: 0 68% 57%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 39 38% 93%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 39 38% 93%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 39 38% 93%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 0 68% 57%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-cream text-foreground;
+  }
+}
+
+@layer utilities {
+  .animation-delay-200 {
+    animation-delay: 200ms;
+  }
+  .animation-delay-400 {
+    animation-delay: 400ms;
+  }
+}
+
+.tag-new {
+  @apply bg-green-600 text-white text-xs px-2 py-0.5 rounded-md;
+}
+
+.tag-hot {
+  @apply bg-accent_red text-white text-xs px-2 py-0.5 rounded-md;
+}
+
+.tag-featured {
+  @apply bg-blue-600 text-white text-xs px-2 py-0.5 rounded-md;
+}
+
+.tag-cited {
+  @apply bg-purple-600 text-white text-xs px-2 py-0.5 rounded-md;
+}
